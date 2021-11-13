@@ -19,32 +19,59 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Set the view's delegate
         sceneView.delegate = self
         
-        // Show statistics such as fps and timing information
+        //シーンの作成
+        sceneView.scene = SCNScene()
+        //デバッグオプションで特徴点を表示する設定を追加
+        sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
+        //FPSやGPU使用率やレンダリングパフォーマンスなどを表示（デフォルトではfalse)
         sceneView.showsStatistics = true
+        //デフォルトでオムニライトを使用（デフォルトではfalse)
+        //オムニライト：１つの光源からすべての方向に向かって光線を出し、影付けと投影の役割を持つ。
+        sceneView.autoenablesDefaultLighting = true
+        //コンフィギュレーションを生成
+        let configration = ARWorldTrackingConfiguration()
+        //平面検出の設定->水平面を検出できるように設定
+        configration.planeDetection = .horizontal
+        //コンフィギュレーションの内容を反映してセッションを開始(シーンの表示)
+        sceneView.session.run(configration)
+        
+        // Show statistics such as fps and timing information
+//        sceneView.showsStatistics = true
         
         // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+//        let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
         // Set the scene to the view
-        sceneView.scene = scene
+//        sceneView.scene = scene
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // Create a session configuration
-        let configuration = ARWorldTrackingConfiguration()
-
-        // Run the view's session
-        sceneView.session.run(configuration)
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        //ノードを生成
+        let sphereNode = SCNNode()
+        //ジオメトリを球体に設定
+        sphereNode.geometry = SCNSphere(radius: 0.05)
+        //球体が埋まらないように球体の位置を上方向に半径分の距離動かす
+        sphereNode.position.y += Float(0.05)
+        //追加されたノードの子要素として球体のノードを登録
+        node.addChildNode(sphereNode)
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        // Pause the view's session
-        sceneView.session.pause()
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//
+//        // Create a session configuration
+//        let configuration = ARWorldTrackingConfiguration()
+//
+//        // Run the view's session
+//        sceneView.session.run(configuration)
+//    }
+    
+//    override func viewWillDisappear(_ animated: Bool) {
+//        super.viewWillDisappear(animated)
+//
+//        // Pause the view's session
+//        sceneView.session.pause()
+//    }
 
     // MARK: - ARSCNViewDelegate
     
